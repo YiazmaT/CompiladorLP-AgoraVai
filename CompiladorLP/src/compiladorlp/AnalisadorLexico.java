@@ -46,6 +46,27 @@ public class AnalisadorLexico {
             return new Token(3, "number", Integer.parseInt(linha[indice]));
         }
         
+        //verify if the current token is an operator
+        t = verifyOperator(linha[indice]);
+        if(t != null){
+            this.indice++;
+            return t;
+        }
+        
+        //verify if the current token is a bracket
+        t = this.verifyBracket(linha[indice]);
+        if(t != null){
+            this.indice++;
+            return t;
+        }
+        
+        //verify if the current token is a comparator
+        t = this.verifyComparator(linha[indice]);
+        if(t != null){
+            this.indice++;
+            return t;
+        }
+        
         this.indice++;
         return t;
     }
@@ -82,5 +103,32 @@ public class AnalisadorLexico {
             return false;
         }
         return true;
+    }
+    
+    public Token verifyOperator(String s){
+        Token t=null;
+        if(s.equals("+")) return new Token(4, s, 8);
+        if(s.equals("-")) return new Token(4, s, 9);
+        if(s.equals("*")) return new Token(5, s, 10);
+        if(s.equals("/")) return new Token(5, s, 11);
+        return t;
+    }
+    
+    public Token verifyBracket(String s){
+        Token t = null;
+        if(s.equals("(")) return new Token(6, s, 12);
+        if(s.equals(")")) return new Token(6, s, 13);
+        return t;
+    }
+    
+    public Token verifyComparator(String s){
+        Token t = null;
+        if(s.equals(">")) return new Token(7, s, 14);
+        if(s.equals("<")) return new Token(7, s, 15);
+        if(s.equals(">=")) return new Token(7, s, 16);
+        if(s.equals("<=")) return new Token(7, s, 17);
+        if(s.equals("==")) return new Token(7, s, 18);
+        if(s.equals("!=")) return new Token(7, s, 19);
+        return t;
     }
 }

@@ -13,6 +13,10 @@ public class Token {
     //type == 1, <comandos>
     //type == 2, <variavel>
     //type == 3, <numero>, the personalID will be the number
+    //type == 4, + or -
+    //type == 5, * or /
+    //type == 6, ( or )
+    //type == 7, <comparador>
     private int type;
     private String text;
     
@@ -24,6 +28,18 @@ public class Token {
     //personalID == 5 == "goto"
     //personalID == 6 == "let"
     //personalID == 7 == variable
+    //personalID == 8 == +
+    //personalID == 9 == -
+    //personalID == 10 == *
+    //personalID == 11 == /
+    //personalID == 12 == (
+    //personalID == 13 == )
+    //personalID == 14 == >
+    //personalID == 15 == <
+    //personalID == 16 == >=
+    //personalID == 17 == <=
+    //personalID == 18 == ==
+    //personalID == 19 == !=
     private int personalID;
 
     public Token(int type, String text) {
