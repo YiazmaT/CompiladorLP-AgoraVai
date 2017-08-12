@@ -6,6 +6,12 @@
 package compiladorlp;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import static java.lang.System.exit;
+import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,22 +20,51 @@ import java.io.File;
 public class AnalisadorLexico {
     private int indice;
     private String [] linha;
+    private File f;
+    private Scanner infile;
+    private Token t;
+
+    public AnalisadorLexico(File f){
+        this.f = f;
+        try {
+            this.infile = new Scanner(f);
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(null, "Arquivo não Encontrado.");
+        }
+        this.readNewLine();
+    }
+    
+    public Token currentToken(){
+        return this.t;
+    }
+    
+    public void readNewLine(){
+        this.indice = 0;
+        
+        if(!infile.hasNextLine()){
+            this.linha = null;
+            return;
+        }
+        
+        String s = infile.nextLine();
+        this.linha = s.split(" ");
+    }
     
     public Token nextToken(){
-        Token t=null;
-        
         //verify if still have tokens on the line
         try{
             linha[indice] = linha[indice];
         }
         catch(Exception e){
-            return null;
+            this.readNewLine();
         }
+        if(linha == null) return null;
         
         //verify if the current token is a command
         t = this.verifyCommand(linha[indice]);
         if(t != null){
             this.indice++;
+            t.print();
             return t;
         }
         
@@ -37,19 +72,23 @@ public class AnalisadorLexico {
         t = verifyVariable(linha[indice]);
         if(t != null){
             this.indice++;
+            t.print();
             return t;
         }
         
         //verify if the current token is a number
         if(this.verifyNumber(linha[indice])){
+            t = new Token(3, "number", Integer.parseInt(linha[indice]));
             this.indice++;
-            return new Token(3, "number", Integer.parseInt(linha[indice]));
+            t.print();
+            return t;
         }
         
         //verify if the current token is an operator
         t = verifyOperator(linha[indice]);
         if(t != null){
             this.indice++;
+            t.print();
             return t;
         }
         
@@ -57,6 +96,7 @@ public class AnalisadorLexico {
         t = this.verifyBracket(linha[indice]);
         if(t != null){
             this.indice++;
+            t.print();
             return t;
         }
         
@@ -64,16 +104,38 @@ public class AnalisadorLexico {
         t = this.verifyComparator(linha[indice]);
         if(t != null){
             this.indice++;
+            t.print();
             return t;
         }
         
-        this.indice++;
-        return t;
-    }
-    
-    public void setNewLine(String linha){
-        this.indice = 0;
-        this.linha = linha.split(" ");
+        //verify if the current token is a assignment
+        t = this.verifyAssignment(linha[indice]);
+        if(t != null){
+            this.indice++;
+            t.print();
+            return t;
+        }
+        
+        //verify if the current token is a end line ";"
+        t = this.verifyEndLine(linha[indice]);
+        if(t != null){
+            this.readNewLine();
+            t.print();
+            return t;
+        }
+        
+        
+        //verify is the current token is a limit
+        t = this.verifyLimits(linha[indice]);
+        if(t != null){
+            t.print();
+            return t;
+        }
+        
+        //this.indice++;
+        JOptionPane.showMessageDialog(null, "Erro Léxico, token inválido: "+linha[indice]);
+        exit(1);
+        return null;
     }
     
     public Token verifyCommand(String s){
@@ -129,6 +191,25 @@ public class AnalisadorLexico {
         if(s.equals("<=")) return new Token(7, s, 17);
         if(s.equals("==")) return new Token(7, s, 18);
         if(s.equals("!=")) return new Token(7, s, 19);
+        return t;
+    }
+    
+    public Token verifyAssignment(String s){
+        Token t = null;
+        if(s.equals("=")) return new Token(8,s,20);
+        return t;
+    }
+    
+    public Token verifyEndLine(String s){
+        Token t = null;
+        if(s.equals(";")) return new Token(9,s,21);
+        return t;
+    }
+    
+    public Token verifyLimits(String s){
+        Token t = null;
+        if(s.equals("{")) return new Token(10,s,22);
+        if(s.equals("}")) return new Token(10,s,23);
         return t;
     }
 }

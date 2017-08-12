@@ -17,6 +17,10 @@ public class Token {
     //type == 5, * or /
     //type == 6, ( or )
     //type == 7, <comparador>
+    //type == 8, =
+    //type == 9, end line
+    //type == 10, { or }
+    
     private int type;
     private String text;
     
@@ -40,8 +44,19 @@ public class Token {
     //personalID == 17 == <=
     //personalID == 18 == ==
     //personalID == 19 == !=
+    //personalID == 20 == =
+    //personalID == 21 == ;
+    //personalID == 22 == {
+    //personalID == 23 == }
+    
     private int personalID;
 
+    public void print(){
+        System.out.println("\nType: "+this.type);
+        System.out.println("Text: "+this.text);
+        System.out.println("PersonalID: "+this.personalID);
+    }
+    
     public Token(int type, String text) {
         this.type = type;
         this.text = text;
